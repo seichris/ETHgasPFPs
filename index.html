@@ -1,0 +1,36 @@
+<html>
+  <head>
+    <title>My Image Gallery</title>
+  </head>
+  <body>
+    <h1>My Image Gallery</h1>
+    <div id="image-container"></div>
+
+    <script>
+      // Assumes that the images are in a folder named 'images' in the same directory as this HTML file
+      const imageFolder = 'images/';
+      const imageTypes = ['jpg', 'jpeg', 'png', 'gif', 'bmp'];
+
+      // Fetch the list of files in the image folder
+      fetch(imageFolder)
+        .then(response => response.text())
+        .then(data => {
+          // Extract the list of image files from the HTML
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(data, 'text/html');
+          const imageLinks = Array.from(htmlDoc.querySelectorAll('a'))
+            .map(a => a.getAttribute('href'))
+            .filter(fileName => imageTypes.includes(fileName.split('.').pop().toLowerCase()));
+
+          // Create image elements for each image
+          const imageContainer = document.getElementById('image-container');
+          for (let i = 0; i < imageLinks.length; i++) {
+              const img = document.createElement("img");
+              img.src = imageFolder + imageLinks[i];
+              img.alt = imageLinks[i];
+              imageContainer.appendChild(img);
+          }
+        });
+    </script>
+  </body>
+</html>
